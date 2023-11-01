@@ -25,7 +25,6 @@ fun DashboardScreen() {
     val viewModel = remember { DashboardViewModel() }
     val payments by viewModel.paymentChart.collectAsState()
 
-
     Scaffold {
         Column(
             modifier = Modifier.fillMaxWidth()
