@@ -14,11 +14,9 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import model.Parking
 import model.ParkingDetail
-import model.Payment
 import retrofit2.create
 import service.ParkingService
 import java.io.IOException
-import java.net.ConnectException
 
 class ParkingRepository {
     private val service by lazy { RetrofitInstance.retrofit.create<ParkingService>() }
@@ -46,16 +44,12 @@ class ParkingRepository {
                 .filterIsInstance<Frame.Text>()
                 .mapNotNull {
                     val readText = it.readText()
-                    //println(readText)
                     Json.decodeFromString<Parking>(readText)
                 }
             emitAll(state)
-        }.retryWhen { cause, attempt ->
-            if (cause is ConnectException && attempt < 5) {
-                delay(5000)
-                return@retryWhen true
-            }
-            false
+        }.retryWhen { _, _ ->
+            delay(1000)
+            return@retryWhen true
         }
     }
 
